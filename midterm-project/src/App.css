@@ -1,0 +1,130 @@
+/* src/App.css */
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #000;
+  padding: 20px;
+  color: #e63946; /* Red color */
+  border-bottom: 2px solid #457b9d; /* Dark blue */
+}
+
+h1 {
+  margin: 0;
+}
+
+.game-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+input[type="text"] {
+  padding: 10px;
+  font-size: 1rem;
+  border: 2px solid #457b9d;
+  background-color: #1d3557; /* Darker blue */
+  color: white;
+  margin-right: 10px;
+  border-radius: 5px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #a8dadc; /* Light blue */
+  color: #1d3557;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #f1faee; /* Off-white */
+}
+
+.player-stats {
+  display: flex;
+  justify-content: space-around;
+  background-color: #1d3557;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  border: 1px solid #457b9d;
+  flex-wrap: wrap; /* Allows wrapping on smaller screens */
+}
+
+.player-stats span {
+  margin: 5px 15px;
+}
+
+.story-text {
+  margin-bottom: 2rem;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  min-height: 100px;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.choices button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  text-align: left;
+  background-color: #457b9d;
+  color: #f1faee;
+}
+
+.choices button:hover {
+  background-color: #a8dadc;
+  color: #1d3557;
+}
+
+.game-over-screen {
+  font-size: 1.2rem;
+}
+
+.game-over-screen h2 {
+  font-size: 2.5rem;
+  color: #e63946;
+}
+
+.game-over-screen button {
+  margin-top: 2rem;
+  background-color: #e63946;
+  color: white;
+}
+
+/* src/App.css */
+
+/* This defines the animation itself */
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+/* This is the class we will add to our element to trigger the animation */
+.shake {
+  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
