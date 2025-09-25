@@ -10,15 +10,12 @@ const GameScreen = () => {
   // This function decides if a choice button should be rendered
   const isChoiceVisible = (choice) => {
     const playerInventory = gameState.inventory;
-    // Condition to HIDE: If 'hideIf' item is in inventory
     if (choice.hideIf && playerInventory.includes(choice.hideIf)) {
       return false;
     }
-    // Condition to HIDE: If 'requires' item is NOT in inventory
     if (choice.requires && !playerInventory.includes(choice.requires)) {
       return false;
     }
-    // Otherwise, show the choice
     return true;
   };
 
@@ -26,7 +23,18 @@ const GameScreen = () => {
     <div className="game-screen">
       <div className="player-stats">
         <span><strong>{gameState.playerName}</strong></span>
-        <span>HP: <strong style={{ color: gameState.hp < 50 ? '#e63946' : '#a8dadc' }}>{gameState.hp}</strong></span>
+        <div className="hp-container">
+          <span>HP: <strong>{gameState.hp}</strong></span>
+          <div className="hp-bar">
+            <div 
+              className="hp-fill" 
+              style={{ 
+                width: `${gameState.hp}%`,
+                backgroundColor: gameState.hp >= 75 ? '#4CAF50' : gameState.hp >= 25 ? '#FFD700' : '#e63946'
+              }}
+            />
+          </div>
+        </div>
         <span>Inventory: <strong>{gameState.inventory.join(', ') || 'None'}</strong></span>
       </div>
 

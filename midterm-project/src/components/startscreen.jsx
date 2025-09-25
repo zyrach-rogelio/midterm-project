@@ -7,10 +7,15 @@ const StartScreen = () => {
   const [name, setName] = useState('');
   const { startGame } = useContext(GameContext);
 
+   const [isShining, setIsShining] = useState(false);
+
   const handleStart = (e) => {
     e.preventDefault(); // Prevents page reload on form submission
     if (name.trim()) {
-      startGame(name.trim());
+      setIsShining(true);
+      setTimeout(() => {
+        startGame(name.trim());
+      }, 100);
     }
   };
 
@@ -19,13 +24,16 @@ const StartScreen = () => {
       <h2>Enter Your Name, Hunter</h2>
       <form onSubmit={handleStart}>
         <input
-          type="text"
+         className='form-control mb-3' //boostrap
+         type="text" 
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Your name..."
+          placeholder="Your name is..."
           autoFocus
         />
-        <button type="submit">Begin Adventure</button>
+        <button 
+            type="submit"
+                className={`btn btn-danger bt-lg shine-button ${isShining ? 'is-shining': '' }`}>Begin Adventure</button>
       </form>
     </div>
   );

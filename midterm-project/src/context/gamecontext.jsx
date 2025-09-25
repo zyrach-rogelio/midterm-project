@@ -1,4 +1,4 @@
-// src/contexts/GameContext.jsx
+// src/contexts/gamecontext.jsx
 
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import storyData from '../data/story.json';
@@ -9,7 +9,7 @@ const initialState = {
   hp: 100,
   inventory: [],
   currentScene: 'start',
-  gameStatus: 'start' // Can be: 'start', 'playing', 'gameOver', 'victory'
+  gameStatus: 'start' // Can be: 'start', 'starting', 'playing', 'gameOver', 'victory'
 };
 
 export const GameContext = createContext();
@@ -28,11 +28,21 @@ export const GameProvider = ({ children }) => {
 
   // Function to begin the game with a player name
   const startGame = (name) => {
-    setGameState({
-      ...initialState, // Reset stats to default
+    // 1. Set the initial state and immediately put the game into the 'starting' (transition) state
+    setGameState(prevState => ({
+      ...initialState,
       playerName: name,
-      gameStatus: 'playing',
-    });
+      gameStatus: 'starting',
+    }));
+
+    // 2. After the animation duration, switch to the 'playing' state
+    // THIS BLOCK HAS BEEN MOVED INSIDE THE startGame FUNCTION
+    setTimeout(() => {
+      setGameState(prevState => ({
+        ...prevState,
+        gameStatus: 'playing',
+      }));
+    }, 1500); // This duration MUST match the CSS transition time!
   };
 
   // Function to reset the game to the start screen
@@ -57,7 +67,6 @@ export const GameProvider = ({ children }) => {
       let newGameStatus = 'playing';
       let finalSceneKey = nextSceneKey;
 
-      // 1. Apply effects from the new scene's "onArrive" block
       if (nextScene.onArrive) {
         if (nextScene.onArrive.addItem && !newInventory.includes(nextScene.onArrive.addItem)) {
           newInventory.push(nextScene.onArrive.addItem);
@@ -67,18 +76,13 @@ export const GameProvider = ({ children }) => {
         }
       }
 
-      // 2. Check for game over due to HP loss
       if (newHp <= 0) {
         newGameStatus = 'gameOver';
-        finalSceneKey = 'gameOver_hp'; // Redirect to the specific HP death scene
-      }
-      // 3. Otherwise, check if the new scene is a defined ending
-      else if (storyData[finalSceneKey].isEnding) {
-        // Determine victory or defeat based on scene key (a simple convention)
+        finalSceneKey = 'gameOver_hp';
+      } else if (storyData[finalSceneKey].isEnding) {
         newGameStatus = finalSceneKey.toLowerCase().includes('good') ? 'victory' : 'gameOver';
       }
 
-      // Return the updated state object
       return {
         ...prevState,
         hp: newHp,

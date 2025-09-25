@@ -61,6 +61,26 @@ button:hover {
   margin: 5px 15px;
 }
 
+.hp-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hp-bar {
+  width: 200px;
+  height: 20px;
+  background-color: #333;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #457b9d;
+}
+
+.hp-fill {
+  height: 100%;
+  transition: width 0.3s ease-out, background-color 0.3s ease-out;
+}
+
 .story-text {
   margin-bottom: 2rem;
   font-size: 1.25rem;
@@ -127,4 +147,68 @@ button:hover {
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   perspective: 1000px;
+}
+
+/* src/App.css */
+
+/* --- Screen Transition Styles --- */
+
+/* A wrapper for our screens to manage positioning */
+.screen-container {
+  position: relative;
+  width: 100%;
+  height: 100%; /* Adjust height as needed */
+}
+
+/* Base style for all screens (StartScreen, GameScreen, etc.) */
+.screen {
+  /* This lets screens stack on top of each other */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  
+  /* The magic for smooth fading! */
+  opacity: 1;
+  transition: opacity 1.5s ease-in-out;
+}
+
+/* Class to make a screen visible and faded in */
+.screen.fade-in {
+  opacity: 1;
+}
+
+/* Class to make a screen invisible and faded out */
+.screen.fade-out {
+  opacity: 0;
+  /* This prevents interacting with the faded-out screen */
+  pointer-events: none; 
+}
+
+
+/* --- Button Shine Animation --- */
+
+.shine-button {
+  position: relative; /* Required for the pseudo-element positioning */
+  overflow: hidden; /* Keeps the shine effect contained within the button */
+}
+
+/* The pseudo-element that creates the actual shine */
+.shine-button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 80%);
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+}
+
+/* The class we add to trigger the shine effect */
+.shine-button.is-shining::after {
+  transform: scale(2);
+  opacity: 1;
 }

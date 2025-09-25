@@ -1,65 +1,71 @@
 // src/App.jsx
 
-import React, { useContext, useState, useEffect } from 'react'; // Add useState and useEffect
-import { GameContext } from './context/gamecontext.jsx'; // Corrected path
+import React, { useContext, useState, useEffect } from 'react';
+import { GameContext } from './context/gamecontext.jsx';
 import StartScreen from './components/startscreen.jsx';
 import GameScreen from './components/gamescreen.jsx';
 import GameOverScreen from './components/gameoverscreen.jsx';
-import { usePrevious } from './hooks/useprevious.jsx'; // Import our new hook
+import { usePrevious } from './hooks/useprevious.jsx';
 import './App.css';
 
 function App() {
   const { gameState, storyData } = useContext(GameContext);
-  const [isShaking, setIsShaking] = useState(false); // State to control the animation class
-
-  // Get the previous HP value using our custom hook
+  const { gameStatus } = gameState;
+  const [isShaking, setIsShaking] = useState(false);
   const prevHp = usePrevious(gameState.hp);
 
-  // This effect runs every time the player's HP changes
   useEffect(() => {
-    // Check if prevHp has a value and if the new HP is less than the old one
     if (prevHp !== undefined && gameState.hp < prevHp) {
-      setIsShaking(true); // Trigger the shake
-
-      // Set a timer to remove the shake class after the animation finishes
-      // This is crucial so it can be re-triggered later!
-      const timeoutId = setTimeout(() => {
-        setIsShaking(false);
-      }, 820); // Must be slightly longer than the CSS animation duration
-
-      // Cleanup function to prevent memory leaks if the component unmounts
-      return () => clearTimeout(timeoutId);
+      setIsShaking(true);
+      const timeout = setTimeout(() => setIsShaking(false), 820);
+      return () => clearTimeout(timeout);
     }
   }, [gameState.hp, prevHp]);
 
+  // We determine which screen is visible based on the game status
+  const showStartScreen = gameStatus === 'start' || gameStatus === 'starting';
+  const showGameScreen = gameStatus === 'playing' || gameStatus === 'starting';
+  const showEndScreen = gameStatus === 'gameOver' || gameStatus === 'victory';
 
-  const renderGameState = () => {
-    const endingMessage = storyData[gameState.currentScene]?.text;
-    switch (gameState.gameStatus) {
-      case 'start':
-        return <StartScreen />;
-      case 'playing':
-        return <GameScreen />;
-      case 'gameOver':
-        return <GameOverScreen message={endingMessage} />;
-      case 'victory':
-        return <GameOverScreen message={endingMessage} />;
-      default:
-        return <StartScreen />;
-    }
-  };
+  const endingMessage = storyData[gameState.currentScene]?.text;
 
   return (
-    <div className="App">
+    <div className="App container py-4">
       <header className="App-header">
         <h1>Aswang Hunter</h1>
       </header>
-      {/*
-        Conditionally add the 'shake' class to the main container.
-        We use a template literal to combine class names.
-      */}
-      <main className={`game-container ${isShaking ? 'shake' : ''}`}>
-        {renderGameState()}
+      
+      <main className={`game-container mt-4${isShaking ? ' shake' : ''}`}>
+        {/* The screen container manages the stacking of our screens */}
+        <div className="screen-container">
+
+          {/* --- START SCREEN --- */}
+          {/* It's always rendered until the 'playing' state begins */}
+          {showStartScreen && (
+            <div className={`screen ${gameStatus === 'starting' ? 'fade-out' : 'fade-in'}`}>
+              <StartScreen />
+            </div>
+          )}
+          
+          {/* --- GAME SCREEN --- */}
+          {/* It's rendered during the transition and gameplay */}
+          {showGameScreen && (
+            <div className={`screen ${gameStatus === 'starting' ? 'fade-in' : ''}`}>
+              {/* We apply a base style of opacity 0 so it can fade in */}
+              <div style={{ opacity: gameStatus === 'playing' ? 1 : 0, transition: 'opacity 1.5s ease-in-out' }}>
+                 <GameScreen />
+              </div>
+            </div>
+          )}
+
+          {/* --- END SCREEN --- */}
+          {showEndScreen && (
+            <div className="screen fade-in">
+              <GameOverScreen message={endingMessage} />
+            </div>
+          )}
+
+        </div>
       </main>
     </div>
   );
